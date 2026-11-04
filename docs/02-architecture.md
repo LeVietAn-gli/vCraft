@@ -207,29 +207,30 @@ sequenceDiagram
     participant FS as UPLOAD_DIR
     participant DB as PostgreSQL
 
-    FE->>M: POST /api/media (multipart, nhiều file)
+    FE->>M: POST /api/me/products/:id/images (multipart, nhiều file)
     M->>M: giới hạn số file, dung lượng
     loop mỗi ảnh
         M->>S: buffer
         S->>S: sharp(buffer).metadata() → xác định loại ảnh thật
-        S->>S: rotate() theo EXIF, resize thumb/medium/large → WebP
+        S->>S: rotate() theo EXIF, resize ra 2 kích cỡ → WebP
         S->>FS: ghi file (tên = id ngẫu nhiên, không dùng tên gốc)
-        S->>DB: INSERT media_files
     end
-    S-->>FE: [{ id, variants }]
+    S->>DB: INSERT ProductImage (imageUrl, thumbUrl) cho cả lô ảnh
+    S-->>FE: [{ id, imageUrl, thumbUrl }]
 ```
 
-| Biến thể | Chiều rộng tối đa | Dùng ở |
-|----------|-------------------|--------|
-| `thumb` | 400px | Grid catalog, popup bản đồ |
-| `medium` | 1000px | Chi tiết sản phẩm, timeline |
-| `large` | 1920px | Xem phóng to |
+Không có bảng media riêng: ảnh được gắn thẳng vào tài nguyên sở hữu nó (`ProductImage`, `MilestoneImage`, `WorkshopImage`, `WorkshopCertificate`). Các endpoint upload xem `05-api.md`, mục 10.
 
-- **Kiểm tra loại tệp thật:** không tin `mimetype` hay đuôi file. Nếu Sharp không đọc được metadata hoặc định dạng không nằm trong danh sách cho phép thì trả 400.
+| Cột | Chiều rộng tối đa | Dùng ở |
+|-----|-------------------|--------|
+| `thumbUrl` | 400px | Grid catalog, popup bản đồ, danh sách |
+| `imageUrl` | 1600px | Chi tiết sản phẩm, timeline, xem phóng to |
+
+- **Kiểm tra loại tệp thật:** không tin `mimetype` hay đuôi file. Nếu Sharp không đọc được metadata hoặc định dạng không phải JPEG/PNG/WebP thì trả 415.
 - Dùng `withoutEnlargement: true` để không phóng to ảnh nhỏ.
-- **Lưu bền vững:** `UPLOAD_DIR` là thư mục cố định nằm ngoài thư mục tạm. Ảnh phải còn sau khi khởi động lại.
-- **Xóa ảnh thừa:** khi thay hoặc xóa ảnh của sản phẩm, mốc nhật ký hay xưởng thì xóa cả bản ghi lẫn file. Ảnh đã upload nhưng không được gắn vào đâu có thể dọn theo thời gian.
-- Frontend: `<img loading="lazy">`, có `width` và `height`, dùng `srcset` với 3 biến thể.
+- **Lưu bền vững:** `UPLOAD_DIR` là thư mục cố định nằm ngoài thư mục tạm. Ảnh phải còn sau khi khởi động lại. CSDL chỉ lưu đường dẫn tương đối `/uploads/...`.
+- **Xóa ảnh thừa:** khi thay hoặc xóa ảnh thì xóa cả bản ghi lẫn file. Trường hợp xóa theo `cascade` (ví dụ xóa một mốc), service phải lấy danh sách đường dẫn ảnh trước khi xóa.
+- Frontend: `<img loading="lazy">`, có `width` và `height`; dùng `srcset` với 2 kích cỡ.
 
 ### 6.2. Lô sản xuất, QR và truy xuất
 
@@ -244,7 +245,7 @@ sequenceDiagram
 ### 6.3. Bản đồ làng nghề
 
 - Leaflet với tile OpenStreetMap, kèm attribution `© OpenStreetMap contributors` (bắt buộc).
-- `GET /api/workshops/map` trả danh sách rút gọn của các xưởng đã duyệt: `slug, name, lat, lng, thumb, acceptsVisitors, visitingHours`.
+- `GET /api/workshops/map` trả danh sách rút gọn của các xưởng đã duyệt: `slug, name, latitude, longitude, thumbUrl, isOpenForVisit, openingHours`.
 - Pin dùng icon SVG tự thiết kế, **hai màu** phân biệt xưởng nhận và không nhận khách; có chú giải và bộ lọc "Nhận khách tham quan".
 - Form hồ sơ xưởng: click lên bản đồ để chọn vị trí, rồi lưu `lat/lng`.
 

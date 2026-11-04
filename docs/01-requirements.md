@@ -123,7 +123,7 @@ Mức ưu tiên: **M** = Must (bắt buộc theo đề), **S** = Should (nên c�
 - Lưu sản phẩm yêu thích
 - Đổi mật khẩu *(không bắt buộc)*, email/SMS, thông báo đẩy
 - Deploy cloud *(chỉ làm khi cần quét QR ngoài mạng LAN)*
-- Tài liệu API riêng
+- Tài liệu API chi tiết (Swagger). Nhóm chỉ có bản hợp đồng API ngắn `05-api.md` (N1-T1-03)
 
 ## 7. Giả định
 
