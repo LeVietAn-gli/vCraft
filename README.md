@@ -1314,96 +1314,9 @@ npm run dev
 
 ---
 
-## 14. Quy trình làm việc nhóm
+## 14. Bảo mật và lưu ý
 
-Dự án được phân chia cho ba thành viên.
-
-| Thành viên | Vai trò | Phần phụ trách                                                           |
-| ---------- | ------- | ------------------------------------------------------------------------ |
-| N1         | Buyer   | Tài khoản, đăng nhập, RFQ, duyệt phương án, đơn hàng, xác nhận nhận hàng |
-| N2         | Artisan | Xưởng, sản phẩm, upload, lô sản xuất, truy xuất, tiến độ                 |
-| N3         | Admin   | Duyệt xưởng, lời mời, báo giá, phương án chia đơn, quản trị              |
-
-Các module nghiệp vụ cần được tích hợp dựa trên API contract và database schema thống nhất.
-
-### 14.1. Quy tắc làm việc với Git
-
-Không phát triển trực tiếp trên nhánh `main` nếu nhóm đang sử dụng quy trình Pull Request.
-
-Tạo nhánh tính năng:
-
-```bash
-git switch main
-git pull origin main
-git switch -c feat/ten-chuc-nang
-```
-
-Sau khi hoàn thành:
-
-```bash
-git add .
-git commit -m "feat: mo ta chuc nang"
-git push -u origin feat/ten-chuc-nang
-```
-
-Mở Pull Request trên GitHub để thành viên khác review trước khi merge.
-
-### 14.2. Quy ước commit
-
-Sử dụng Conventional Commits:
-
-```text
-feat: thêm chức năng mới
-fix: sửa lỗi
-docs: cập nhật tài liệu
-refactor: tái cấu trúc mã nguồn
-test: bổ sung kiểm thử
-chore: cập nhật cấu hình hoặc công cụ
-```
-
-Ví dụ:
-
-```bash
-git commit -m "feat(rfq): add buyer RFQ creation"
-```
-
-### 14.3. Trước khi tạo Pull Request
-
-Nên chạy:
-
-```bash
-npm run check
-npm test
-npm run build
-```
-
-Ngoài ra cần tự kiểm tra các chức năng bị ảnh hưởng trên ứng dụng đang chạy.
-
-Nếu PR thay đổi database, cần ghi rõ cách cập nhật schema/migration và tác động tới dữ liệu hiện có.
-
-### 14.4. Lưu ý khi tích hợp module
-
-Phiên bản hiện tại có các router đọc dữ liệu tạm tại:
-
-```text
-backend/src/integration/
-```
-
-Khi module Artisan/Admin hoàn thiện, cần:
-
-- Thay thế các endpoint tạm bằng API do thành viên tương ứng triển khai.
-- Đảm bảo không trùng route.
-- Thống nhất các trạng thái RFQ, Order và ProductionTask.
-- Kiểm tra phân quyền ở backend.
-- Kiểm tra các transaction quan trọng.
-- Cập nhật tài liệu API.
-- Kiểm thử lại toàn bộ luồng Buyer → Artisan → Admin.
-
----
-
-## 15. Bảo mật và lưu ý
-
-### 15.1. Không commit thông tin bí mật
+### 14.1. Không commit thông tin bí mật
 
 Không đưa lên GitHub:
 
@@ -1421,13 +1334,13 @@ Riêng các file `.env.example` cần được giữ trong repository để ngư
 
 Nếu vô tình commit mật khẩu hoặc secret thật, cần thay thế secret đó và loại bỏ thông tin khỏi lịch sử Git theo quy trình phù hợp.
 
-### 15.2. Mật khẩu demo
+### 14.2. Mật khẩu demo
 
 Các tài khoản có mật khẩu `Demo@2026!` chỉ phục vụ môi trường thử nghiệm local.
 
 Không triển khai public với các tài khoản demo này.
 
-### 15.3. Session và cookie
+### 14.3. Session và cookie
 
 Backend sử dụng session lưu phía server và cookie HttpOnly.
 
@@ -1435,7 +1348,7 @@ Các request thay đổi dữ liệu được kiểm tra Origin.
 
 Việc bảo vệ dữ liệu Buyer phải được thực hiện phía backend, không chỉ dựa vào giao diện.
 
-### 15.4. Database
+### 14.4. Database
 
 Không dùng database phát triển chung với database production.
 
@@ -1443,7 +1356,7 @@ Không chạy seed demo trên dữ liệu thật.
 
 Không xóa Docker volume nếu chưa sao lưu dữ liệu cần giữ.
 
-### 15.5. Triển khai production
+### 14.5. Triển khai production
 
 README này ưu tiên **cài đặt môi trường phát triển local**.
 
@@ -1464,7 +1377,7 @@ Không nên xem cấu hình Docker Compose local trong tài liệu này là cấ
 
 ---
 
-## 16. Tài liệu tham khảo nội bộ
+## 15. Tài liệu tham khảo nội bộ
 
 Các tài liệu kỹ thuật nằm trong thư mục `docs/`.
 
