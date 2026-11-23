@@ -1,0 +1,65 @@
+.fields {
+  display: grid;
+  gap: var(--space-4);
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+.visuallyHidden {
+  position: absolute;
+  clip-path: inset(50%);
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+.pair,
+.slot,
+.album {
+  display: grid;
+  gap: var(--space-3);
+}
+.group {
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+}
+.group legend {
+  font-weight: 600;
+}
+.day {
+  display: grid;
+  gap: var(--space-2);
+  justify-items: start;
+  padding-block: var(--space-3);
+}
+.day + .day {
+  border-top: 1px solid var(--color-line);
+}
+.slot {
+  width: 100%;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: end;
+}
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 2rem;
+}
+.album {
+  grid-template-columns: repeat(auto-fit, minmax(min(13rem, 100%), 1fr));
+}
+.album img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  height: auto;
+}
+@media (min-width: 640px) {
+  .pair {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .slot {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
+  }
+}

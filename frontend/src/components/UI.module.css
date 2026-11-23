@@ -1,0 +1,119 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--control);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-lam);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  background: var(--color-lam);
+  color: var(--color-paper);
+  text-decoration: none;
+  font-weight: 600;
+}
+.button:hover {
+  background: var(--color-lam-dark);
+  color: var(--color-paper);
+}
+.secondary {
+  background: var(--color-paper);
+  color: var(--color-lam);
+}
+.field {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+}
+.field label {
+  font-weight: 600;
+}
+.field p {
+  margin: 0;
+  font-size: var(--text-small);
+}
+.grid,
+.gallery {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.card {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.card > img,
+.card > .placeholder {
+  object-fit: cover;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-3);
+  height: auto;
+}
+.placeholder {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  text-align: center;
+  padding: var(--space-2);
+  background: var(--color-terra-light);
+  font-size: var(--text-small);
+}
+.photoButton {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
+  cursor: zoom-in;
+  background: var(--color-line);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+.photoButton img,
+.photoButton .placeholder {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  height: auto;
+}
+.gallery figcaption {
+  padding-block: var(--space-2);
+  color: var(--color-ink-soft);
+  font-size: var(--text-small);
+}
+.dialog {
+  max-width: min(55rem, calc(100% - 2 * var(--space-4)));
+  border: none;
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+}
+.dialog::backdrop {
+  background: var(--color-scrim);
+}
+.dialog img {
+  max-height: 73vh;
+  object-fit: contain;
+}
+.dialog > div:first-child {
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+@media (max-width: 359px) {
+  .grid,
+  .gallery {
+    grid-template-columns: 1fr;
+  }
+}
+@media (min-width: 640px) {
+  .grid,
+  .gallery {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}

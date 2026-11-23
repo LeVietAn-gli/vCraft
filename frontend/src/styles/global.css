@@ -1,0 +1,141 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  color: var(--color-ink);
+  background: var(--color-ivory);
+  font: 1rem/1.65 var(--font-sans);
+}
+h1,
+h2,
+h3 {
+  font-family: var(--font-serif);
+  line-height: 1.2;
+  margin: 0 0 var(--space-3);
+}
+h1 {
+  font-size: var(--text-h1);
+}
+h2 {
+  font-size: var(--text-h2);
+}
+h3 {
+  font-size: var(--text-h3);
+}
+p {
+  margin: 0 0 var(--space-3);
+}
+a {
+  color: var(--color-lam);
+}
+:focus-visible {
+  outline: 3px solid var(--color-terra);
+  outline-offset: 4px;
+}
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+figure {
+  margin: 0;
+}
+fieldset {
+  min-width: 0;
+}
+input,
+textarea,
+button,
+select {
+  font: inherit;
+}
+input:not([type='checkbox']),
+textarea,
+select {
+  width: 100%;
+  min-width: 0;
+  min-height: var(--control);
+  padding: var(--space-2);
+  color: var(--color-ink);
+  background: var(--color-paper);
+  border: 1px solid var(--color-ink-soft);
+  border-radius: var(--radius-sm);
+}
+input[aria-invalid='true'],
+textarea[aria-invalid='true'] {
+  border-color: var(--color-danger);
+}
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.62;
+}
+.container {
+  width: min(var(--container), calc(100% - 2 * var(--space-4)));
+  margin: auto;
+}
+.section {
+  padding-block: var(--space-12);
+}
+.narrow {
+  max-width: var(--container-narrow);
+}
+.stack {
+  display: grid;
+  gap: var(--space-4);
+}
+.actions {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  align-items: center;
+}
+.panel {
+  background: var(--color-paper);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+}
+.error {
+  color: var(--color-danger);
+  overflow-wrap: anywhere;
+}
+.muted {
+  color: var(--color-ink-soft);
+}
+.skip {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  z-index: 3;
+  transform: translateY(-180%);
+}
+.skip:focus {
+  transform: none;
+}
+.siteHeader,
+.siteFooter {
+  background: var(--color-paper);
+}
+.siteHeader {
+  border-bottom: 1px solid var(--color-line);
+}
+.siteFooter {
+  border-top: 1px solid var(--color-line);
+  padding-block: var(--space-8);
+}
+.siteNav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding-block: var(--space-3);
+}
+.siteNav a {
+  text-decoration: none;
+  font-weight: 600;
+}
+.siteNav a:hover {
+  text-decoration: underline;
+}

@@ -1,0 +1,7 @@
+dist/
+uploads/
+package-lock.json
+backend/prisma/migrations/
+backend/prisma/schema.prisma
+*.svg
+*.webp
