@@ -1,0 +1,73 @@
+.hero {
+  display: grid;
+  position: relative;
+  isolation: isolate;
+  min-height: min(125vw, 38rem);
+  color: var(--color-on-photo);
+  background: var(--color-lam-dark);
+}
+.hero > img,
+.hero::after,
+.heroCopy {
+  grid-area: 1 / 1;
+}
+.hero > img {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  z-index: -2;
+}
+.hero::after {
+  content: '';
+  background: linear-gradient(90deg, var(--color-scrim), transparent 180%);
+  z-index: -1;
+}
+.heroCopy {
+  align-self: end;
+  width: min(var(--container), calc(100% - 2 * var(--space-4)));
+  margin-inline: auto;
+  padding-block: var(--space-8);
+}
+.heroCopy > p {
+  letter-spacing: 0.1em;
+  font-weight: 600;
+  font-size: var(--text-small);
+}
+.heroCopy h1 {
+  font-size: var(--text-display);
+  max-width: 22ch;
+  margin-bottom: var(--space-6);
+}
+.credit {
+  text-align: right;
+  padding: var(--space-2) var(--space-4);
+  color: var(--color-ink-soft);
+  font-size: var(--text-small);
+}
+.story {
+  display: grid;
+  align-items: center;
+  gap: var(--space-6);
+}
+.story > img {
+  width: 100%;
+  border-radius: var(--radius-md);
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+}
+.section {
+  margin-top: var(--space-12);
+}
+@media (min-width: 640px) {
+  .hero {
+    min-height: clamp(27rem, 56.25vw, 46rem);
+  }
+  .heroCopy {
+    align-self: center;
+  }
+  .story {
+    grid-template-columns: 1fr 1fr;
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "name": "vcraft-n2-foundation",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "engines": {
+    "node": "^22.13.0 || >=24.0.0"
+  },
+  "scripts": {
+    "dev": "concurrently -k \"npm run dev -w backend\" \"npm run dev -w frontend\"",
+    "build": "npm run build -w frontend",
+    "start": "npm start -w backend",
+    "db:generate": "npm run db:generate -w backend",
+    "db:migrate": "npm run db:migrate -w backend",
+    "seed": "npm run seed -w backend",
+    "test": "npm test -w backend",
+    "lint": "eslint backend frontend",
+    "format:check": "prettier --check backend frontend package.json docker-compose.yml docs/N2-Tuan-1.md"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "concurrently": "9.2.5",
+    "eslint": "10.15.0",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "globals": "16.5.0",
+    "prettier": "3.10.1"
+  }
+}
