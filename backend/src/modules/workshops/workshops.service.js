@@ -1,5 +1,6 @@
+import { uploadGallery } from '../media/gallery.js'
 import { AppError } from '../../errors.js'
-import { certificateInput, imageInput } from './workshops.schema.js'
+import { certificateInput } from './workshops.schema.js'
 
 export function createWorkshopService(repository, media) {
   async function own(id) {
@@ -33,16 +34,8 @@ export function createWorkshopService(repository, media) {
         )
     },
     async uploadImages(ownerId, files, fields) {
-      const { altText } = imageInput.parse(fields)
-      const labels = typeof altText === 'string' ? [altText] : altText
-      if (labels && labels.length !== files.length) {
-        throw new AppError(400, 'VALIDATION_ERROR', 'Mỗi ảnh cần một vị trí mô tả tương ứng.')
-      }
-      const rows = await media.upload(files, {}, (variants) =>
-        repository.addImages(
-          ownerId,
-          variants.map((item, index) => ({ ...item, altText: labels?.[index] || null })),
-        ),
+      const rows = await uploadGallery(media, files, fields, (entries) =>
+        repository.addImages(ownerId, entries),
       )
       return rows.sort((a, b) => a.sortOrder - b.sortOrder)
     },

@@ -3,18 +3,6 @@ import { useResource } from '../api/useResource.js'
 import { CardGrid, Gallery, Resource } from '../components/UI.jsx'
 import { week } from './WorkshopEditor.jsx'
 
-export function Catalog() {
-  const state = useResource('/products')
-  return (
-    <div className="container section">
-      <h1>Khám phá gốm Bát Tràng</h1>
-      <Resource state={state}>
-        {(entries) => <CardGrid entries={entries} type="product" />}
-      </Resource>
-    </div>
-  )
-}
-
 export function Village() {
   const state = useResource('/workshops/map')
   return (
@@ -43,6 +31,21 @@ export function Village() {
         }
       </Resource>
     </div>
+  )
+}
+
+function WorkshopProducts({ slug }) {
+  const state = useResource('/products?' + new URLSearchParams({ workshop: slug, limit: '4' }))
+  return (
+    <section className="stack">
+      <h2>Sản phẩm của xưởng</h2>
+      <Resource state={state}>
+        {(entries) => <CardGrid entries={entries} type="product" />}
+      </Resource>
+      <Link to={'/kham-pha?' + new URLSearchParams({ workshop: slug })}>
+        Xem toàn bộ sản phẩm của xưởng
+      </Link>
+    </section>
   )
 }
 
@@ -99,6 +102,7 @@ export function Workshop() {
                 </ul>
               </section>
             )}
+            <WorkshopProducts slug={slug} />
             {data.batches.length > 0 && (
               <section>
                 <h2>Lô sản xuất công khai</h2>
@@ -137,7 +141,7 @@ export function Trace() {
               <ul>
                 {batch.products.map((item) => (
                   <li key={item.slug}>
-                    {item.name} · {item.quantity}
+                    <Link to={'/san-pham/' + item.slug}>{item.name}</Link> · {item.quantity}
                   </li>
                 ))}
               </ul>

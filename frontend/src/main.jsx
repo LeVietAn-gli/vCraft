@@ -10,7 +10,12 @@ import { BrowserRouter, Link, Route, Routes } from 'react-router-dom'
 import Home from './pages/Home.jsx'
 import WorkshopEditor from './pages/WorkshopEditor.jsx'
 import DemoLogin from './pages/DemoLogin.jsx'
-import { Catalog, Trace, Village, Workshop } from './pages/PublicPages.jsx'
+import { Trace, Village, Workshop } from './pages/PublicPages.jsx'
+import { Catalog, ProductDetail } from './pages/ProductPublic.jsx'
+import { ProductEditor } from './pages/ProductEditor.jsx'
+import { ProductManager } from './pages/ProductManager.jsx'
+import { MilestoneAlbum, MilestoneIndex } from './pages/MilestoneAlbum.jsx'
+import { RfqHandoff } from './pages/RfqHandoff.jsx'
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
@@ -26,6 +31,7 @@ createRoot(document.getElementById('root')).render(
           <Link to="/kham-pha">Khám phá</Link>
           <Link to="/lang-nghe">Làng nghề</Link>
           <Link to="/nghe-nhan/ho-so">Hồ sơ xưởng</Link>
+          <Link to="/nghe-nhan/san-pham">Quản lý sản phẩm</Link>
         </div>
       </nav>
     </header>
@@ -33,6 +39,13 @@ createRoot(document.getElementById('root')).render(
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/kham-pha" element={<Catalog />} />
+        <Route path="/san-pham/:slug" element={<ProductDetail />} />
+        <Route path="/nghe-nhan/san-pham" element={<ProductManager />} />
+        <Route path="/nghe-nhan/san-pham/tao" element={<ProductEditor />} />
+        <Route path="/nghe-nhan/san-pham/:id" element={<ProductEditor />} />
+        <Route path="/nghe-nhan/anh-nhat-ky" element={<MilestoneIndex />} />
+        <Route path="/nghe-nhan/anh-nhat-ky/:id" element={<MilestoneAlbum />} />
+        <Route path="/buyer/rfq/tao" element={<RfqHandoff />} />
         <Route path="/lang-nghe" element={<Village />} />
         <Route path="/xuong/:slug" element={<Workshop />} />
         <Route path="/truy-xuat/:maLo" element={<Trace />} />

@@ -253,29 +253,6 @@ export function workshopRepository(db) {
         where: { id, workshop: { ownerId, status: 'APPROVED' } },
         select: { batchCode: true },
       }),
-    async publicProducts({ page, limit }) {
-      const where = { status: 'VISIBLE', workshop: approved }
-      const [data, total] = await db.$transaction(
-        async (tx) => {
-          const rows = await tx.product.findMany({
-            where,
-            select: {
-              slug: true,
-              name: true,
-              description: true,
-              price: true,
-              images: { where: { isPrimary: true }, select: { thumbUrl: true, altText: true } },
-            },
-            orderBy: [{ createdAt: 'desc' }, { id: 'asc' }],
-            skip: (page - 1) * limit,
-            take: limit,
-          })
-          return [rows, await tx.product.count({ where })]
-        },
-        { isolationLevel: 'RepeatableRead' },
-      )
-      return { data, meta: { page, limit, total, totalPages: Math.ceil(total / limit) } }
-    },
     async trace(batchCode) {
       const batch = await db.productionBatch.findFirst({
         where: { batchCode, isPublic: true, workshop: approved },

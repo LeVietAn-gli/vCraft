@@ -74,9 +74,6 @@ export const certificateInput = z.strictObject({
     .optional()
     .transform((date) => (date ? new Date(date + 'T00:00:00Z') : null)),
 })
-export const imageInput = z.strictObject({
-  altText: z.union([text(300), z.array(text(300)).max(10)]).optional(),
-})
 export const imageOrder = z.strictObject({
   ids: z
     .array(z.uuid())
