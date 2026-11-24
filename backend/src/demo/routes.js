@@ -2,7 +2,7 @@ import { Router } from 'express'
 import qrcode from 'qrcode'
 import { z } from 'zod'
 import { AppError, validate } from '../errors.js'
-import { byId, catalogQuery } from '../modules/workshops/workshops.schema.js'
+import { byId } from '../modules/workshops/workshops.schema.js'
 
 export function demoDataRoutes({ repository, origin, requireArtisan }) {
   const router = Router()
@@ -11,11 +11,6 @@ export function demoDataRoutes({ repository, origin, requireArtisan }) {
     format: z.enum(['png', 'svg']).default('png'),
     size: z.coerce.number().int().min(128).max(1024).default(320),
   })
-  router.get(
-    '/products',
-    validate(catalogQuery.pick({ page: true, limit: true }), 'query'),
-    async (req, res) => res.json(await repository.publicProducts(req.validated.query)),
-  )
   router.get('/trace/:batchCode', validate(code, 'params'), async (req, res) => {
     const value = await repository.trace(req.validated.params.batchCode)
     if (!value) throw new AppError(404, 'BATCH_NOT_FOUND', 'Không tìm thấy lô công khai.')

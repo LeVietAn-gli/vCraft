@@ -1,3 +1,5 @@
+import { productRoutes } from './modules/products/products.routes.js'
+import { milestoneImageRoutes } from './modules/production/milestone-images.routes.js'
 import express from 'express'
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
@@ -15,6 +17,8 @@ export function requireArtisan(req, _res, next) {
 
 export function createApp({
   repository,
+  products,
+  milestones,
   media,
   origin,
   frontend,
@@ -40,6 +44,8 @@ export function createApp({
   installSession?.(app)
   const service = createWorkshopService(repository, media)
   app.use('/api', workshopRoutes({ service, media, requireArtisan }))
+  if (products) app.use('/api', productRoutes({ products, media, requireArtisan }))
+  if (milestones) app.use('/api', milestoneImageRoutes({ milestones, media, requireArtisan }))
   if (supplementalRoutes) app.use('/api', supplementalRoutes)
 
   const missing = () => new AppError(404, 'NOT_FOUND', 'Không tìm thấy nội dung.')

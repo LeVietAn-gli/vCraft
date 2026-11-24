@@ -1,3 +1,4 @@
+import { MediaUpload } from '../components/MediaUpload.jsx'
 import { useRef, useState } from 'react'
 import { apiFetch } from '../api/client.js'
 import { useResource } from '../api/useResource.js'
@@ -14,7 +15,6 @@ export const week = Object.entries({
   sat: 'Thứ Bảy',
   sun: 'Chủ nhật',
 })
-const imageTypes = ['image/jpeg', 'image/png', 'image/webp']
 const statusText = {
   PENDING: 'Chờ duyệt',
   APPROVED: 'Đã duyệt · đang hiển thị công khai',
@@ -218,96 +218,6 @@ function Profile({ workshop, categories, save, busy, validation }) {
   )
 }
 
-function Upload({ certificate = false, busy, run, maximumMb }) {
-  const [selectionId, setSelectionId] = useState(0)
-  const [fileError, setFileError] = useState('')
-  const [message, setMessage] = useState('')
-  // Kiểm tra ảnh mới và tạo lại các ô mô tả để tránh gắn nhầm nội dung.
-  function choose(input) {
-    setSelectionId((currentId) => currentId + 1)
-    const selected = Array.from(input.files)
-    setMessage('')
-    const bad = selected.find(
-      (file) =>
-        !file.size ||
-        (file.type && !imageTypes.includes(file.type)) ||
-        (maximumMb && file.size > maximumMb * 1024 * 1024),
-    )
-    if (selected.length > 10 || bad) {
-      setFileError(
-        bad
-          ? 'Kiểm tra tệp “' + bad.name + '”. Chọn ảnh JPEG, PNG hoặc WebP đúng giới hạn.'
-          : 'Chọn tối đa 10 ảnh mỗi lần.',
-      )
-      setFiles([])
-      input.value = ''
-      return
-    }
-    setFileError('')
-    setFiles(selected)
-  }
-  function submit(event) {
-    event.preventDefault()
-    const form = event.currentTarget
-    const data = new FormData(form)
-    files.forEach((file) => data.append(certificate ? 'file' : 'images', file))
-    run(data, () => {
-      form.reset()
-      setFiles([])
-      setMessage(certificate ? 'Đã thêm chứng nhận.' : 'Đã tải ảnh lên.')
-    })
-  }
-  return (
-    <form className="stack" onSubmit={submit}>
-      <fieldset disabled={busy} className={styles.fields}>
-        <legend className={styles.visuallyHidden}>
-          {certificate ? 'Thêm chứng nhận' : 'Tải ảnh xưởng'}
-        </legend>
-        {certificate && (
-          <div className={styles.pair}>
-            <Field label="Tên chứng nhận">
-              {(props) => <input {...props} required name="title" maxLength="255" />}
-            </Field>
-            <Field label="Đơn vị cấp">
-              {(props) => <input {...props} required name="issuer" maxLength="255" />}
-            </Field>
-            <Field label="Ngày cấp (tùy chọn)">
-              {(props) => <input {...props} name="issuedAt" type="date" />}
-            </Field>
-          </div>
-        )}
-        <Field label={certificate ? 'Ảnh chứng nhận' : 'Chọn ảnh xưởng'} error={fileError}>
-          {(props) => (
-            <input
-              {...props}
-              type="file"
-              accept={imageTypes.join(',')}
-              multiple={!certificate}
-              onChange={(event) => choose(event.currentTarget)}
-            />
-          )}
-        </Field>
-        <p className="muted">
-          JPEG, PNG hoặc WebP tĩnh{maximumMb ? `, tối đa ${maximumMb} MiB mỗi ảnh` : ''}.
-          {certificate ? '' : ' Tối đa 10 ảnh mỗi lượt.'}
-        </p>
-        {!certificate &&
-          files.map((file, index) => (
-            <Field key={selectionId + '-' + index} label={`Mô tả ảnh ${index + 1} · ${file.name}`}>
-              <input name={`caption-${index}`} type="text" />
-            </Field>
-          ))}
-        <div>
-          <Button type="submit" disabled={!files.length || busy}>
-            {certificate ? 'Thêm chứng nhận' : 'Tải ảnh lên'}
-          </Button>
-        </div>
-        <p role="status">{message}</p>
-      </fieldset>
-    </form>
-  )
-}
-
 function Editor({ initial, categories }) {
   const [workshop, setWorkshop] = useState(initial)
   const [active, setActive] = useState(null)
@@ -424,7 +334,7 @@ function Editor({ initial, categories }) {
             </p>
           )}
           {!locked && (
-            <Upload
+            <MediaUpload
               busy={Boolean(active)}
               maximumMb={workshop.maxUploadMb}
               run={(body, done) => upload(false, body, done)}
@@ -482,7 +392,7 @@ function Editor({ initial, categories }) {
             </p>
           )}
           {!locked && (
-            <Upload
+            <MediaUpload
               certificate
               busy={Boolean(active)}
               maximumMb={workshop.maxUploadMb}

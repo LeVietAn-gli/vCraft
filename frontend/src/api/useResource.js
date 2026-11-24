@@ -8,8 +8,8 @@ export function useResource(path) {
     const controller = new AbortController()
     const { signal } = controller
     apiFetch(path, { signal }).then(
-      ({ data }) => {
-        if (!signal.aborted) setResult({ path, revision, data })
+      ({ data, meta }) => {
+        if (!signal.aborted) setResult({ path, revision, data, meta })
       },
       (error) => {
         if (!signal.aborted) setResult({ path, revision, error })

@@ -1,3 +1,5 @@
+import { productRepository } from './modules/products/products.repository.js'
+import { milestoneImageRepository } from './modules/production/milestone-images.repository.js'
 import { fileURLToPath } from 'node:url'
 import { resolve } from 'node:path'
 import { createApp, requireArtisan } from './app.js'
@@ -20,6 +22,8 @@ const media = createMedia(
 )
 const app = createApp({
   repository,
+  products: productRepository(database),
+  milestones: milestoneImageRepository(database),
   media,
   origin: config.APP_PUBLIC_URL,
   frontend: fileURLToPath(new URL('../../frontend/dist/', import.meta.url)),

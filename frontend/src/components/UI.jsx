@@ -139,19 +139,33 @@ export function CardGrid({ entries, type }) {
           <h3>
             {type === 'workshop' ? (
               <Link to={'/xuong/' + entry.slug}>{entry.name}</Link>
+            ) : type === 'product' ? (
+              <Link to={'/san-pham/' + entry.slug}>{entry.name}</Link>
             ) : (
               entry.name
             )}
           </h3>
           {entry.address && <p className="muted">{entry.address}</p>}
+          {entry.workshop && <p className="muted">{entry.workshop.name}</p>}
           {type === 'product' && (
             <p>
               {entry.price == null
                 ? 'Liên hệ báo giá'
-                : new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(
-                    entry.price,
-                  )}
+                : new Intl.NumberFormat('vi-VN', {
+                    style: 'currency',
+                    currency: 'VND',
+                    maximumFractionDigits: 2,
+                  }).format(entry.price)}
             </p>
+          )}
+          {type === 'product' && (
+            <Button
+              to={'/san-pham/' + entry.slug}
+              variant="secondary"
+              aria-label={'Xem chi tiết ' + entry.name}
+            >
+              Xem chi tiết
+            </Button>
           )}
         </article>
       ))}
