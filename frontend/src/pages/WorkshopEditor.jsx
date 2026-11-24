@@ -219,10 +219,12 @@ function Profile({ workshop, categories, save, busy, validation }) {
 }
 
 function Upload({ certificate = false, busy, run, maximumMb }) {
-  const [files, setFiles] = useState([])
+  const [selectionId, setSelectionId] = useState(0)
   const [fileError, setFileError] = useState('')
   const [message, setMessage] = useState('')
+  // Kiểm tra ảnh mới và tạo lại các ô mô tả để tránh gắn nhầm nội dung.
   function choose(input) {
+    setSelectionId((currentId) => currentId + 1)
     const selected = Array.from(input.files)
     setMessage('')
     const bad = selected.find(
@@ -291,8 +293,8 @@ function Upload({ certificate = false, busy, run, maximumMb }) {
         </p>
         {!certificate &&
           files.map((file, index) => (
-            <Field key={index} label={`Mô tả ảnh ${index + 1} · ${file.name}`}>
-              {(props) => <input {...props} name="altText[]" maxLength="300" />}
+            <Field key={selectionId + '-' + index} label={`Mô tả ảnh ${index + 1} · ${file.name}`}>
+              <input name={`caption-${index}`} type="text" />
             </Field>
           ))}
         <div>
