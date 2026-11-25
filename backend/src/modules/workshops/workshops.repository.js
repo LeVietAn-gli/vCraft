@@ -291,7 +291,10 @@ export function workshopRepository(db) {
               description: true,
               occurredAt: true,
               orderIndex: true,
-              images: publicFields.images,
+              images: {
+                orderBy: publicFields.images.orderBy,
+                select: { imageUrl: true, thumbUrl: true, altText: true },
+              },
             },
           },
         },
@@ -300,6 +303,10 @@ export function workshopRepository(db) {
       const { images, ...workshop } = batch.workshop
       return {
         ...batch,
+        milestones: batch.milestones.map((entry) => ({
+          ...entry,
+          description: entry.description || null,
+        })),
         workshop: { ...workshop, thumbUrl: images[0]?.thumbUrl ?? null },
         products: batch.products.map(({ quantity, product }) => ({
           quantity,

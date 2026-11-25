@@ -16,6 +16,9 @@ import { ProductEditor } from './pages/ProductEditor.jsx'
 import { ProductManager } from './pages/ProductManager.jsx'
 import { MilestoneAlbum, MilestoneIndex } from './pages/MilestoneAlbum.jsx'
 import { RfqHandoff } from './pages/RfqHandoff.jsx'
+import { BatchList, batchPath } from './pages/BatchList.jsx'
+import { BatchEditor } from './pages/BatchEditor.jsx'
+import { BatchQr } from './pages/BatchQr.jsx'
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
@@ -32,6 +35,7 @@ createRoot(document.getElementById('root')).render(
           <Link to="/lang-nghe">Làng nghề</Link>
           <Link to="/nghe-nhan/ho-so">Hồ sơ xưởng</Link>
           <Link to="/nghe-nhan/san-pham">Quản lý sản phẩm</Link>
+          <Link to={batchPath}>Lô sản xuất</Link>
         </div>
       </nav>
     </header>
@@ -43,6 +47,10 @@ createRoot(document.getElementById('root')).render(
         <Route path="/nghe-nhan/san-pham" element={<ProductManager />} />
         <Route path="/nghe-nhan/san-pham/tao" element={<ProductEditor />} />
         <Route path="/nghe-nhan/san-pham/:id" element={<ProductEditor />} />
+        <Route path={batchPath} element={<BatchList />} />
+        <Route path={batchPath + '/tao'} element={<BatchEditor />} />
+        <Route path={batchPath + '/:id'} element={<BatchEditor />} />
+        <Route path={batchPath + '/:id/qr'} element={<BatchQr />} />
         <Route path="/nghe-nhan/anh-nhat-ky" element={<MilestoneIndex />} />
         <Route path="/nghe-nhan/anh-nhat-ky/:id" element={<MilestoneAlbum />} />
         <Route path="/buyer/rfq/tao" element={<RfqHandoff />} />

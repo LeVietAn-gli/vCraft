@@ -1,0 +1,28 @@
+/* File này làm gì: Bố trí nhãn QR và ẩn điều khiển khi in.
+   Ai gọi file này: BatchQr.jsx. */
+.label {
+  width: min(100%, 24rem);
+  overflow-wrap: anywhere;
+}
+.code {
+  display: block;
+  width: min(100%, 20rem);
+  height: auto;
+  aspect-ratio: 1 / 1;
+  background: white;
+}
+@media print {
+  body:has(.printPage) :global(.siteHeader),
+  body:has(.printPage) :global(.siteFooter),
+  body:has(.printPage) :global(.skip),
+  .noPrint {
+    display: none;
+  }
+  body:has(.printPage) {
+    background: white;
+    color: black;
+  }
+  .label {
+    break-inside: avoid;
+  }
+}
