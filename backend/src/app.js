@@ -1,3 +1,4 @@
+import { batchRoutes } from './modules/production/batches.routes.js'
 import { productRoutes } from './modules/products/products.routes.js'
 import { milestoneImageRoutes } from './modules/production/milestone-images.routes.js'
 import express from 'express'
@@ -19,6 +20,8 @@ export function createApp({
   repository,
   products,
   milestones,
+  batches,
+  journal,
   media,
   origin,
   frontend,
@@ -46,6 +49,7 @@ export function createApp({
   app.use('/api', workshopRoutes({ service, media, requireArtisan }))
   if (products) app.use('/api', productRoutes({ products, media, requireArtisan }))
   if (milestones) app.use('/api', milestoneImageRoutes({ milestones, media, requireArtisan }))
+  if (batches && journal) app.use('/api', batchRoutes({ batches, journal, media, requireArtisan }))
   if (supplementalRoutes) app.use('/api', supplementalRoutes)
 
   const missing = () => new AppError(404, 'NOT_FOUND', 'Không tìm thấy nội dung.')

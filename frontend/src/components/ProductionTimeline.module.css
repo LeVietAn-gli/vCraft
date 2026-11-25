@@ -1,0 +1,29 @@
+/* File này làm gì: Bố trí mốc nhật ký trong cột linh hoạt.
+   Ai gọi file này: ProductionTimeline.jsx. */
+.timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 var(--space-4);
+  border-left: 2px solid var(--color-line);
+}
+.entry {
+  position: relative;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  padding-bottom: var(--space-6);
+}
+.entry::before {
+  position: absolute;
+  top: 0.55rem;
+  left: calc(-1 * var(--space-4) - 0.36rem);
+  width: 0.6rem;
+  height: 0.6rem;
+  background: var(--color-terra);
+  border-radius: 50%;
+  content: '';
+}
+@media (max-width: 480px) {
+  .entry > div {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

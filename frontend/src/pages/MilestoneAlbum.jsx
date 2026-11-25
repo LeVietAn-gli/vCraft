@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { apiFetch } from '../api/client.js'
 import { useResource } from '../api/useResource.js'
 import { MediaUpload } from '../components/MediaUpload.jsx'
@@ -119,12 +119,15 @@ function Album({ initial, path }) {
 
 export function MilestoneAlbum() {
   const { id } = useParams()
+  const [params] = useSearchParams()
+  const batchId = params.get('batchId')
+  const back = batchId ? '/nghe-nhan/lo-san-xuat/' + encodeURIComponent(batchId) : base
   const path = '/me/milestones/' + encodeURIComponent(id) + '/images'
   const state = useResource(path)
   return (
     <div className="container narrow section stack">
       <p>
-        <Link to={base}>Về danh sách mốc</Link>
+        <Link to={back}>{batchId ? 'Về quản lý lô' : 'Về danh sách mốc'}</Link>
       </p>
       <Resource state={state}>
         {(initial) => <Album key={id} initial={initial} path={path} />}

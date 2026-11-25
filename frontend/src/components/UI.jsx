@@ -95,7 +95,7 @@ export function Gallery({ images }) {
     <>
       <div className={styles.gallery}>
         {images.map((image) => (
-          <figure key={image.id}>
+          <figure key={image.id ?? image.imageUrl}>
             <button
               className={styles.photoButton}
               type="button"

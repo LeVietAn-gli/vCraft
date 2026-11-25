@@ -1,3 +1,4 @@
+import { ProductionTimeline } from '../components/ProductionTimeline.jsx'
 import { useParams, Link } from 'react-router-dom'
 import { useResource } from '../api/useResource.js'
 import { CardGrid, Gallery, Resource } from '../components/UI.jsx'
@@ -138,6 +139,7 @@ export function Trace() {
             {batch.status === 'CANCELLED' && <p className="error">Đã hủy</p>}
             <section>
               <h2>Sản phẩm cùng lô</h2>
+              {!batch.products.length && <p>Chưa có sản phẩm được công khai trong lô.</p>}
               <ul>
                 {batch.products.map((item) => (
                   <li key={item.slug}>
@@ -146,26 +148,9 @@ export function Trace() {
                 ))}
               </ul>
             </section>
-            <section>
+            <section aria-label="Nhật ký sản xuất">
               <h2>Nhật ký sản xuất</h2>
-              <ol>
-                {batch.milestones.map((entry) => (
-                  <li key={entry.orderIndex}>
-                    <h3>{entry.title}</h3>
-                    <p>
-                      {entry.occurredAt
-                        ? new Intl.DateTimeFormat('vi-VN', {
-                            dateStyle: 'short',
-                            timeStyle: 'short',
-                            timeZone: 'Asia/Ho_Chi_Minh',
-                          }).format(new Date(entry.occurredAt))
-                        : 'Chưa ghi thời điểm'}
-                    </p>
-                    <p>{entry.description}</p>
-                    <Gallery images={entry.images} />
-                  </li>
-                ))}
-              </ol>
+              <ProductionTimeline milestones={batch.milestones} />
             </section>
           </div>
         )}

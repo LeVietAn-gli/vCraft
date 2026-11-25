@@ -1,3 +1,5 @@
+import { batchRepository } from './modules/production/batches.repository.js'
+import { milestoneRepository } from './modules/production/milestones.repository.js'
 import { productRepository } from './modules/products/products.repository.js'
 import { milestoneImageRepository } from './modules/production/milestone-images.repository.js'
 import { fileURLToPath } from 'node:url'
@@ -24,8 +26,10 @@ const app = createApp({
   repository,
   products: productRepository(database),
   milestones: milestoneImageRepository(database),
+  batches: batchRepository(database),
+  journal: milestoneRepository(database),
   media,
-  origin: config.APP_PUBLIC_URL,
+  origin: config.CLIENT_ORIGIN ?? config.APP_PUBLIC_URL,
   frontend: fileURLToPath(new URL('../../frontend/dist/', import.meta.url)),
   supplementalRoutes: demoDataRoutes({ repository, origin: config.APP_PUBLIC_URL, requireArtisan }),
   installSession: demo

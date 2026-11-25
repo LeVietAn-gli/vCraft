@@ -38,6 +38,7 @@ export function milestoneImageRepository(db) {
           })),
           select: projection,
         })
+        await tx.productionMilestone.update({ where: { id }, data: { updatedById: ownerId } })
         return added.sort((a, b) => a.sortOrder - b.sortOrder)
       })
     },
@@ -47,6 +48,7 @@ export function milestoneImageRepository(db) {
         const image = images.find(({ id }) => id === imageId)
         if (!image) throw new AppError(404, 'IMAGE_NOT_FOUND', 'Không tìm thấy ảnh của mốc.')
         await tx.milestoneImage.delete({ where: { id: imageId } })
+        await tx.productionMilestone.update({ where: { id }, data: { updatedById: ownerId } })
         return image
       })
     },
