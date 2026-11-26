@@ -13,7 +13,10 @@
   "dependencies": {
     "@prisma/adapter-pg": "7.10.1",
     "@prisma/client": "7.10.1",
+    "bcryptjs": "^2.4.3",
+    "connect-pg-simple": "^10.0.0",
     "express": "5.1.0",
+    "express-rate-limit": "^7.5.1",
     "express-session": "1.18.2",
     "multer": "2.5.0",
     "pg": "8.22.0",
