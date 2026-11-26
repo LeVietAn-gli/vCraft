@@ -17,6 +17,9 @@ export async function apiFetch(path, { method = 'GET', body, signal } = {}) {
   const result = await response.json().catch(() => null)
   if (!response.ok || !result) {
     const error = new Error(result?.error?.message ?? 'Không đọc được phản hồi máy chủ.')
+    if (response.status === 401 && !path.startsWith('/auth/') && path !== '/demo/session')
+      window.dispatchEvent(new Event('vcraft-session-expired'))
+    error.code = result?.error?.code
     error.status = response.status
     error.details = result?.error?.details
     throw error

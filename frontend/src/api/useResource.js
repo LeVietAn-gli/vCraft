@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { apiFetch } from './client.js'
 
 export function useResource(path) {
@@ -17,8 +17,9 @@ export function useResource(path) {
     )
     return () => controller.abort()
   }, [path, revision])
+  const reload = useCallback(() => setRevision((value) => value + 1), [])
   return {
     ...(result?.path === path && result.revision === revision ? result : {}),
-    reload: () => setRevision((value) => value + 1),
+    reload,
   }
 }

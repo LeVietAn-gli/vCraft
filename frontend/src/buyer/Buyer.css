@@ -1,0 +1,69 @@
+.buyerBadge {
+  display: inline-block;
+  padding: 0.15rem 0.65rem;
+  border-radius: var(--radius-sm);
+  background: var(--color-terra-light);
+  color: var(--color-ink);
+  font-size: var(--text-small);
+}
+.buyerForm fieldset {
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+}
+.buyerForm legend {
+  font-weight: 600;
+  padding-inline: 0.35rem;
+}
+.buyerInfo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+  gap: var(--space-3);
+  margin: 0;
+}
+.buyerInfo dt {
+  color: var(--color-ink-soft);
+}
+.buyerInfo dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.buyerScroll {
+  overflow-x: auto;
+  max-width: 100%;
+  min-width: 0;
+}
+.buyerTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+.buyerTable th,
+.buyerTable td {
+  text-align: left;
+  padding: 0.6rem;
+  border-bottom: 1px solid var(--color-line);
+}
+.buyerTable th {
+  background: var(--color-ivory);
+}
+.buyerSteps {
+  display: flex;
+  gap: 0.5rem 1.2rem;
+  flex-wrap: wrap;
+  list-style: none;
+  padding: 0;
+  color: var(--color-ink-soft);
+}
+.buyerSteps [aria-current='step'] {
+  color: var(--color-lam-dark);
+  font-weight: 600;
+  border-bottom: 2px solid currentColor;
+}
+.buyerCard {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.buyerCard progress {
+  width: min(100%, 35rem);
+  accent-color: var(--color-lam);
+}
