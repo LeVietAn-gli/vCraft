@@ -126,6 +126,14 @@ export function Workshop() {
 export function Trace() {
   const { maLo } = useParams()
   const state = useResource('/trace/' + encodeURIComponent(maLo))
+  if (state.error?.status === 404)
+    return (
+      <div className="container narrow section">
+        <h1>Không tìm thấy lô sản xuất</h1>
+        <p>Kiểm tra lại mã trên nhãn sản phẩm hoặc liên hệ xưởng cung cấp.</p>
+        <Link to="/">Về trang chủ</Link>
+      </div>
+    )
   return (
     <div className="container narrow section">
       <Resource state={state}>
@@ -136,7 +144,20 @@ export function Trace() {
               <h1>{batch.name}</h1>
               <Link to={'/xuong/' + batch.workshop.slug}>{batch.workshop.name}</Link>
             </header>
-            {batch.status === 'CANCELLED' && <p className="error">Đã hủy</p>}
+            <p>
+              {
+                {
+                  PLANNED: 'Đã lên kế hoạch',
+                  IN_PROGRESS: 'Đang sản xuất',
+                  COMPLETED: 'Đã hoàn thành',
+                  CANCELLED: 'Đã hủy',
+                }[batch.status]
+              }
+              {batch.startedAt &&
+                ' · Bắt đầu ' + new Date(batch.startedAt).toLocaleDateString('vi-VN')}
+              {batch.completedAt &&
+                ' · Hoàn thành ' + new Date(batch.completedAt).toLocaleDateString('vi-VN')}
+            </p>
             <section>
               <h2>Sản phẩm cùng lô</h2>
               {!batch.products.length && <p>Chưa có sản phẩm được công khai trong lô.</p>}
