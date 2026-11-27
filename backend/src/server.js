@@ -1,3 +1,5 @@
+import { installAuth } from './modules/auth/auth.js'
+import { buyerRoutes } from './modules/buyer/buyer.routes.js'
 import { batchRepository } from './modules/production/batches.repository.js'
 import { milestoneRepository } from './modules/production/milestones.repository.js'
 import { productRepository } from './modules/products/products.repository.js'
@@ -31,15 +33,41 @@ const app = createApp({
   media,
   origin: config.CLIENT_ORIGIN ?? config.APP_PUBLIC_URL,
   frontend: fileURLToPath(new URL('../../frontend/dist/', import.meta.url)),
-  supplementalRoutes: demoDataRoutes({ repository, origin: config.APP_PUBLIC_URL, requireArtisan }),
-  installSession: demo
-    ? (app) =>
-        installDemoSession(app, {
-          password: demo,
-          secret: config.SESSION_SECRET,
-          lookupUser: repository.lookupUser,
-        })
-    : undefined,
+  supplementalRoutes: [
+    buyerRoutes(database),
+    demoDataRoutes({ repository, origin: config.APP_PUBLIC_URL, requireArtisan }),
+  ],
+  installSession(app) {
+    if (config.SESSION_SECRET)
+      installAuth(app, {
+        db: database,
+        connectionString: config.DATABASE_URL,
+        secret: config.SESSION_SECRET,
+        demoPassword: demo,
+        secure: config.APP_PUBLIC_URL.startsWith('https://'),
+      })
+    else {
+      app.get('/api/auth/me', (_req, res) =>
+        res
+          .status(401)
+          .json({ error: { code: 'UNAUTHENTICATED', message: 'Vui lòng đăng nhập.' } }),
+      )
+      app.use('/api/auth', (_req, res) =>
+        res
+          .status(503)
+          .json({
+            error: { code: 'AUTH_UNAVAILABLE', message: 'Máy chủ chưa cấu hình phiên đăng nhập.' },
+          }),
+      )
+    }
+    if (demo)
+      installDemoSession(app, {
+        password: demo,
+        secret: config.SESSION_SECRET,
+        lookupUser: repository.lookupUser,
+        shared: true,
+      })
+  },
 })
 const server = app.listen(config.PORT, config.HOST, () =>
   console.info('vCraft API cổng', config.PORT),

@@ -37,6 +37,10 @@ enum BatchStatus {
 }
 
 model User {
+  rfqs              Rfq[]
+  orders            Order[]
+  createdPlans      AllocationPlan[]
+  sentInvitations   RfqInvitation[]
   id                String                @id @default(uuid()) @db.Uuid
   email             String                @unique @db.VarChar(255)
   passwordHash      String                @db.VarChar(255)
@@ -61,6 +65,10 @@ model Session {
 }
 
 model Workshop {
+  invitations     RfqInvitation[]
+  bids            Bid[]
+  planItems       AllocationPlanItem[]
+  tasks           ProductionTask[]
   id              String                @id @default(uuid()) @db.Uuid
   ownerId         String                @unique @db.Uuid
   owner           User                  @relation("Owner", fields: [ownerId], references: [id], onDelete: Restrict)
@@ -127,6 +135,7 @@ model WorkshopCertificate {
 }
 
 model Category {
+  rfqs      Rfq[]
   id        String             @id @default(uuid()) @db.Uuid
   name      String             @db.VarChar(255)
   slug      String             @unique @db.VarChar(255)
@@ -135,21 +144,22 @@ model Category {
 }
 
 model Product {
-  id             String         @id @default(uuid()) @db.Uuid
-  workshopId     String         @db.Uuid
-  workshop       Workshop       @relation(fields: [workshopId], references: [id], onDelete: Restrict)
-  categoryId     String         @db.Uuid
-  category       Category       @relation(fields: [categoryId], references: [id], onDelete: Restrict)
-  name           String         @db.VarChar(255)
-  slug           String         @unique @db.VarChar(255)
-  description    String         @default("")
-  specifications Json           @default("{}")
-  price          Decimal?       @db.Decimal(12, 2)
-  status         ProductStatus  @default(HIDDEN)
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
-  images         ProductImage[]
-  batches        BatchProduct[]
+  referencingRfqs Rfq[]
+  id              String         @id @default(uuid()) @db.Uuid
+  workshopId      String         @db.Uuid
+  workshop        Workshop       @relation(fields: [workshopId], references: [id], onDelete: Restrict)
+  categoryId      String         @db.Uuid
+  category        Category       @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  name            String         @db.VarChar(255)
+  slug            String         @unique @db.VarChar(255)
+  description     String         @default("")
+  specifications  Json           @default("{}")
+  price           Decimal?       @db.Decimal(12, 2)
+  status          ProductStatus  @default(HIDDEN)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  images          ProductImage[]
+  batches         BatchProduct[]
 
   @@index([workshopId, categoryId, status])
   @@index([categoryId, status])
@@ -170,6 +180,7 @@ model ProductImage {
 }
 
 model ProductionBatch {
+  tasks       ProductionTask[]
   id          String                @id @default(uuid()) @db.Uuid
   workshopId  String                @db.Uuid
   workshop    Workshop              @relation(fields: [workshopId], references: [id], onDelete: Restrict)
@@ -228,4 +239,189 @@ model MilestoneImage {
   createdAt   DateTime            @default(now())
 
   @@index([milestoneId, sortOrder])
+}
+
+enum RfqStatus {
+  DRAFT
+  SENT
+  BIDDING
+  ACCEPTED
+  IN_PRODUCTION
+  DELIVERED
+}
+
+enum InvitationStatus {
+  INVITED
+  VIEWED
+  BID_SUBMITTED
+}
+
+enum BidStatus {
+  SUBMITTED
+  ACCEPTED
+  REJECTED
+}
+
+enum PlanStatus {
+  DRAFT
+  PENDING_BUYER
+  ACCEPTED
+  REJECTED
+}
+
+enum OrderStatus {
+  IN_PRODUCTION
+  READY
+  DELIVERED
+}
+
+enum TaskStatus {
+  ASSIGNED
+  IN_PROGRESS
+  COMPLETED
+}
+
+model Rfq {
+  id                 String           @id @default(uuid()) @db.Uuid
+  code               String           @unique @db.VarChar(20)
+  buyerId            String           @db.Uuid
+  buyer              User             @relation(fields: [buyerId], references: [id], onDelete: Restrict)
+  categoryId         String           @db.Uuid
+  category           Category         @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  referenceProductId String?          @db.Uuid
+  referenceProduct   Product?         @relation(fields: [referenceProductId], references: [id], onDelete: Restrict)
+  title              String           @db.VarChar(200)
+  description        String
+  quantity           Int
+  unit               String           @default("chiếc") @db.VarChar(30)
+  budgetMax          Decimal?         @db.Decimal(12, 2)
+  bidDeadline        DateTime
+  requiredBy         DateTime         @db.Date
+  contactName        String           @db.VarChar(150)
+  contactPhone       String?          @db.VarChar(20)
+  deliveryAddress    String           @db.VarChar(300)
+  status             RfqStatus        @default(DRAFT)
+  sentAt             DateTime?
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+  invitations        RfqInvitation[]
+  bids               Bid[]
+  plans              AllocationPlan[]
+  order              Order?
+
+  @@index([buyerId, status])
+  @@index([status])
+}
+
+model RfqInvitation {
+  id          String           @id @default(uuid()) @db.Uuid
+  rfqId       String           @db.Uuid
+  rfq         Rfq              @relation(fields: [rfqId], references: [id], onDelete: Cascade)
+  workshopId  String           @db.Uuid
+  workshop    Workshop         @relation(fields: [workshopId], references: [id], onDelete: Restrict)
+  invitedById String?          @db.Uuid
+  invitedBy   User?            @relation(fields: [invitedById], references: [id], onDelete: Restrict)
+  status      InvitationStatus @default(INVITED)
+  viewedAt    DateTime?
+  createdAt   DateTime         @default(now())
+
+  @@unique([rfqId, workshopId])
+}
+
+model Bid {
+  id              String               @id @default(uuid()) @db.Uuid
+  rfqId           String               @db.Uuid
+  rfq             Rfq                  @relation(fields: [rfqId], references: [id], onDelete: Restrict)
+  workshopId      String               @db.Uuid
+  workshop        Workshop             @relation(fields: [workshopId], references: [id], onDelete: Restrict)
+  quantityOffered Int
+  unitPrice       Decimal              @db.Decimal(12, 2)
+  leadTimeDays    Int
+  note            String?
+  status          BidStatus            @default(SUBMITTED)
+  lockedAt        DateTime?
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+  items           AllocationPlanItem[]
+
+  @@unique([rfqId, workshopId])
+}
+
+model AllocationPlan {
+  id            String               @id @default(uuid()) @db.Uuid
+  rfqId         String               @db.Uuid
+  rfq           Rfq                  @relation(fields: [rfqId], references: [id], onDelete: Restrict)
+  createdById   String               @db.Uuid
+  createdBy     User                 @relation(fields: [createdById], references: [id], onDelete: Restrict)
+  status        PlanStatus           @default(DRAFT)
+  totalQuantity Int                  @default(0)
+  totalAmount   Decimal              @default(0) @db.Decimal(12, 2)
+  rejectReason  String?
+  sentAt        DateTime?
+  decidedAt     DateTime?
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+  items         AllocationPlanItem[]
+  order         Order?
+}
+
+model AllocationPlanItem {
+  id         String          @id @default(uuid()) @db.Uuid
+  planId     String          @db.Uuid
+  plan       AllocationPlan  @relation(fields: [planId], references: [id], onDelete: Cascade)
+  bidId      String          @db.Uuid
+  bid        Bid             @relation(fields: [bidId], references: [id], onDelete: Restrict)
+  workshopId String          @db.Uuid
+  workshop   Workshop        @relation(fields: [workshopId], references: [id], onDelete: Restrict)
+  quantity   Int
+  unitPrice  Decimal         @db.Decimal(12, 2)
+  lineTotal  Decimal         @db.Decimal(12, 2)
+  dueDate    DateTime        @db.Date
+  task       ProductionTask?
+
+  @@unique([planId, bidId])
+}
+
+model Order {
+  id          String           @id @default(uuid()) @db.Uuid
+  code        String           @unique @db.VarChar(20)
+  rfqId       String           @unique @db.Uuid
+  rfq         Rfq              @relation(fields: [rfqId], references: [id], onDelete: Restrict)
+  planId      String           @unique @db.Uuid
+  plan        AllocationPlan   @relation(fields: [planId], references: [id], onDelete: Restrict)
+  buyerId     String           @db.Uuid
+  buyer       User             @relation(fields: [buyerId], references: [id], onDelete: Restrict)
+  totalAmount Decimal          @db.Decimal(12, 2)
+  status      OrderStatus      @default(IN_PRODUCTION)
+  receivedAt  DateTime?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  tasks       ProductionTask[]
+
+  @@index([buyerId, status])
+}
+
+model ProductionTask {
+  id                String             @id @default(uuid()) @db.Uuid
+  orderId           String             @db.Uuid
+  order             Order              @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  workshopId        String             @db.Uuid
+  workshop          Workshop           @relation(fields: [workshopId], references: [id], onDelete: Restrict)
+  planItemId        String             @unique @db.Uuid
+  planItem          AllocationPlanItem @relation(fields: [planItemId], references: [id], onDelete: Restrict)
+  quantity          Int
+  completedQuantity Int                @default(0)
+  unitPrice         Decimal            @db.Decimal(12, 2)
+  dueDate           DateTime           @db.Date
+  status            TaskStatus         @default(ASSIGNED)
+  progressNote      String?
+  batchId           String?            @db.Uuid
+  batch             ProductionBatch?   @relation(fields: [batchId], references: [id], onDelete: Restrict)
+  startedAt         DateTime?
+  completedAt       DateTime?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  @@unique([orderId, workshopId])
+  @@index([workshopId, status])
 }

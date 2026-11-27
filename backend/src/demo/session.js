@@ -5,21 +5,23 @@ import { AppError, validate } from '../errors.js'
 
 const login = z.strictObject({ email: z.email(), password: z.string().max(128) })
 
-export function installDemoSession(app, { password, secret, lookupUser }) {
+export function installDemoSession(app, { password, secret, lookupUser, shared = false }) {
   if (!password) return
-  app.use(
-    session({
-      name: 'vcraft.demo.sid',
-      secret,
-      resave: false,
-      saveUninitialized: false,
-      cookie: { httpOnly: true, sameSite: 'lax', maxAge: 60 * 60_000 },
-    }),
-  )
-  app.use(async (req, _res, next) => {
-    if (req.session.userId) req.user = await lookupUser({ id: req.session.userId })
-    next()
-  })
+  if (!shared)
+    app.use(
+      session({
+        name: 'vcraft.demo.sid',
+        secret,
+        resave: false,
+        saveUninitialized: false,
+        cookie: { httpOnly: true, sameSite: 'lax', maxAge: 60 * 60_000 },
+      }),
+    )
+  if (!shared)
+    app.use(async (req, _res, next) => {
+      if (req.session.userId) req.user = await lookupUser({ id: req.session.userId })
+      next()
+    })
   app.post('/api/demo/session', validate(login), async (req, res) => {
     const { email, password: typed } = req.validated.body
     const given = Buffer.from(typed)
@@ -42,7 +44,7 @@ export function installDemoSession(app, { password, secret, lookupUser }) {
   app.delete('/api/demo/session', (req, res, next) => {
     req.session.destroy((error) => {
       if (error) return next(error)
-      res.clearCookie('vcraft.demo.sid').sendStatus(204)
+      res.clearCookie(shared ? 'vcraft.sid' : 'vcraft.demo.sid').sendStatus(204)
     })
   })
 }

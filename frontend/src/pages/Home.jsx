@@ -87,10 +87,40 @@ export function ExhibitionHome({ featured, studios, news, map, wholesale }) {
 }
 
 export default function Home() {
+  const news = useResource('/news?featured=true&limit=3')
   const products = useResource('/products')
   const workshops = useResource('/workshops?limit=8')
   return (
     <ExhibitionHome
+      wholesale={
+        <section className={styles.section}>
+          <h2>Đặt hàng từ các xưởng</h2>
+          <Button to="/buyer/rfq/tao">Tạo yêu cầu báo giá</Button>
+        </section>
+      }
+      news={
+        <section className={styles.section}>
+          <h2>Tin cộng đồng nổi bật</h2>
+          {news.error?.status === 404 ? (
+            <p>Tin cộng đồng chưa được kết nối.</p>
+          ) : (
+            <Resource state={news}>
+              {(items) =>
+                items.length ? (
+                  items.map((n) => (
+                    <article key={n.slug}>
+                      <h3>{n.title}</h3>
+                      <p>{n.summary}</p>
+                    </article>
+                  ))
+                ) : (
+                  <p>Chưa có tin nổi bật.</p>
+                )
+              }
+            </Resource>
+          )}
+        </section>
+      }
       featured={
         <section className={styles.section}>
           <h2>Sản phẩm tiêu biểu</h2>

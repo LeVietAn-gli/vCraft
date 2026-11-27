@@ -1,3 +1,4 @@
+import { CatalogFilters } from '../buyer/CatalogFilters.jsx'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { useResource } from '../api/useResource.js'
 import { Button, CardGrid, Gallery, Resource } from '../components/UI.jsx'
@@ -13,6 +14,7 @@ export function Catalog() {
         <h1>Khám phá gốm Bát Tràng</h1>
         <p>Các sản phẩm đang trưng bày tại những xưởng đã duyệt.</p>
       </header>
+      <CatalogFilters />
       <Resource state={state}>
         {(entries) => (
           <>

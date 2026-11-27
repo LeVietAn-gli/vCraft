@@ -1,3 +1,4 @@
+import { seedBuyers } from './buyer-seed.js'
 import { mkdir } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -129,6 +130,7 @@ try {
       )
     }
   }
+  await seedBuyers(database, config.VCRAFT_DEMO_PASSWORD)
   console.info('Đã nạp xưởng, sản phẩm, lô và tài khoản demo.')
 } finally {
   await database.$disconnect()
